@@ -16,12 +16,17 @@ INTRO_TEXT = 'Привет! Вы находитесь в приватном на
 MONGODB_URI = os.environ.get('MONGODB_URI')
 db = None
 logs_collection = None
-if MONGODB_URI:
+
+log1={"start":datetime.datetime.now()}
+print(log1)
+
+if MONGODB_URI is not None:
     # w=0 means fast non-blocking write
     client = pymongo.MongoClient(MONGODB_URI, w=0)
     db = client.get_default_database()
-    logs_collection = db.get_collection('logs')
-
+#    logs_collection = db.get_collection('logs')
+    logs_collection = db.logs
+    logs_collection.insert_one(log1)
 
 def do_translate(form, translate_state, token):
     api_req = {
@@ -45,8 +50,10 @@ def do_translate(form, translate_state, token):
 def handler(event, context):
     # токен для доступа к API перевода забираем прямо из функции, если у вас есть сервисный аккаунт
     token = None
-    if context and hasattr(context, 'token') and context.token:
+    if context and hasattr(context, 'token') and context.token and token != None:
         token = context.token.get('access_token')
+    else:
+        token = None
 
     translate_state = event.get('state', {}).get('session', {}).get('translate', {})
     last_phrase = event.get('state', {}).get('session', {}).get('last_phrase')
@@ -57,6 +64,7 @@ def handler(event, context):
     end_session = 'false'
 
     translate_full = intents.get('translate_full')
+
     if intents.get('exit'):
         text = 'Приятно было попереводить для вас! ' \
                'Чтобы вернуться в навык, скажите "Запусти навык Крот-Полиглот". До свидания!'
@@ -84,7 +92,8 @@ def handler(event, context):
     }
 
     utterance = event.get('request', {}).get('original_utterance')
-    if logs_collection and utterance != 'ping':
+
+    if logs_collection is not None and utterance != 'ping':
         logs_collection.insert_one({
             'request': replace_dotted_keys(event),
             'response': response,
@@ -93,4 +102,5 @@ def handler(event, context):
             'utterance': utterance,
             'response_text': response['response']['text'],
         })
+
     return response
