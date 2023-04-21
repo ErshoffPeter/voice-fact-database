@@ -1,5 +1,5 @@
-# demo-alice-translate-skill
-![Mole image](https://avatars.mds.yandex.net/get-dialogs/1017510/0479fa286034b99b6294/catalogue-icon-x3)
+# voice-fact-database
+![Mole image](https://avatars.mds.yandex.net/get-dialogs/399212/3d737866f1c74217b760/orig)
 
 ## Что это такое
 
