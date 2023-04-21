@@ -46,6 +46,19 @@ def do_translate(form, translate_state, token):
     text = tran_error or tran_result
     return text, translate_state
 
+def do_fact(form, translate_state):
+    api_req = {
+        'text': form['slots'].get('object', {}).get('value'),
+        'connector': form['slots'].get('connector', {}).get('value'),
+        'description': form['slots'].get('description', {}).get('value'),
+    }
+    api_req = {k: v for k, v in api_req.items() if v}
+    translate_state.update(api_req)
+    if 'text' not in translate_state:
+        return 'Не поняла, какой объект факта', translate_state
+    text = 'Получен факт "' + form['slots'].get('object', {}).get('value') + '" с описанием "'+form['slots'].get('description', {}).get('value')+'" (соединитель: "'+form['slots'].get('connector', {}).get('value')+'").'
+    return text, translate_state
+
 
 def handler(event, context):
     # токен для доступа к API перевода забираем прямо из функции, если у вас есть сервисный аккаунт
@@ -78,6 +91,8 @@ def handler(event, context):
             text = 'Ох, я забыл, что нужно повторить. Попросите меня лучше что-нибудь перевести.'
     elif translate_full:
         text, translate_state = do_translate(translate_full, translate_state, token=token)
+    elif intents.get('facts'):
+        text, translate_state = do_fact(intents.get('facts'), translate_state)
     elif command:
         text = 'Не понял вас. Чтобы выйти из навыка "Крот-Полиглот", скажите "Хватит".'
 
