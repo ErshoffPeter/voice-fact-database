@@ -1,0 +1,68 @@
+root:
+    $Ellipsis
+
+    $Connector $Description
+    $Object $Connector $Description
+    $Object $Description
+
+    %negative
+    $Object $Connector
+    %negative
+    $Connector    
+
+slots:
+    object:
+        source: $Object
+    connector:
+        source: $Connector
+    description:
+        source: $Description
+
+filler:
+    алиса
+    а ещё
+    также
+    иногда
+    зачастую
+
+$Ellipsis:
+    $LeftFiller+ $Connector $Description
+    $LeftFiller $Description
+    %negative
+    $LeftFiller
+    %positive
+    
+$LeftFiller:
+    а ещё
+    или
+    иногда
+
+$Object:
+    .+
+    %negative
+    $Connector    
+    %positive
+
+$PositiveConnector:
+    %lemma
+    это
+    значит
+    обозначает
+    является
+    бывает
+    есть
+
+$NegativeConnector:
+    %lemma
+    не
+    не $PositiveConnector
+
+$Connector:
+    $PositiveConnector
+    $NegativeConnector
+    
+$Description:
+    .+
+    %negative
+    $Connector    
+    %positive
