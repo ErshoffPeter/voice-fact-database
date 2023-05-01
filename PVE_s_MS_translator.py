@@ -9,8 +9,9 @@
 
 import os, requests, uuid, json
 
+
 class PVE_s_MS_tranlatorClient:
-    def __init__(self, subscription_key_in, endpoint_in = 'https://api-nam.cognitive.microsofttranslator.com'):
+    def __init__(self, subscription_key_in, endpoint_in = 'https://api.cognitive.microsofttranslator.com'):
         # If you encounter any issues with the base_url or path, make sure
         # that you are using the latest endpoint: https://docs.microsoft.com/azure/cognitive-services/translator/reference/v3-0-translate
         self.subscription_key = subscription_key_in
@@ -19,6 +20,7 @@ class PVE_s_MS_tranlatorClient:
 
         self.headers = {
                         'Ocp-Apim-Subscription-Key': self.subscription_key,
+                        'Ocp-Apim-Subscription-Region': 'canadacentral',
                         'Content-type': 'application/json',
                         'X-ClientTraceId': str(uuid.uuid4())
                         }
@@ -29,7 +31,20 @@ class PVE_s_MS_tranlatorClient:
             for cur_key, cur_value in cur_param.items() :
                 params = params + '&' + cur_key + '=' + cur_value
         constructed_url = self.endpoint + self.path + params
+
+        print("logging(constructed_url)")
+        print(constructed_url)
+
+        print("self.headers")
+        print(self.headers)
+
+        #   constructed_url = "https://www.google.ru"
+
         self.request = requests.post(constructed_url, headers=self.headers, json=body_in)
+
+        print("logging(self.request)")
+        print(self.request)
+
         return self.request.json()
 
 
