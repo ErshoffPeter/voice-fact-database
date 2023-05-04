@@ -4,7 +4,7 @@
 ## Что это такое
 
 В этом репозитории - пример простого навыка Алисы 
-["Крот-полиглот"](https://dialogs.yandex.ru/store/skills/622af903-krot-poliglot)
+["Ёрш-полиглот"](https://dialogs.yandex.ru/store/skills/622af903-krot-poliglot)
 , реализованного на Python с использованием 
 [новых фич](https://yandex.ru/blog/dialogs/vesennee-obnovlenie-platformy-dialogov) 
 [Яндекс.Диалогов](https://dialogs.yandex.ru/) -  [грамматик](https://yandex.ru/dev/dialogs/alice/doc/nlu-docpage/) и 
@@ -20,7 +20,7 @@
 Навык предназначен для публикации на 
 [Yandex Cloud Functions](https://cloud.yandex.ru/docs/functions/) 
 (для навыков Алисы это бесплатно, но нужно привязать карту). 
-Впервые он был представлен на "Хакатоне 0 марта" 
+Впервые он был представлен на "Хакатоне 0 марта" как "Крот-полиглот"
 ([объявление](https://events.yandex.ru/events/hakaton-navykov-29-02-2020), 
 [результаты](https://yandex.ru/blog/dialogs/kak-proshel-fevralskiy-khakaton)).
 

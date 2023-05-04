@@ -24,7 +24,7 @@ def main(param_in, param_out):
                 {'text' : param_in}
             ]
 
-    response = MyTranslator.translate(params, body)
+    response = MyTranslator.translate_list(params, body)
 
     param_out = json.dumps(response, sort_keys=True, indent=4, separators=(',', ': '))
 

@@ -1,15 +1,18 @@
 import os
 import pymongo
 import datetime
-
+from PVE_s_MS_translator import PVE_s_MS_tranlatorClient
 
 from translation import translate, is_like_russian
 from utils import replace_dotted_keys
 
-INTRO_TEXT = 'Привет! Вы находитесь в приватном навыке "Крот-Полиглот". ' \
-    'Скажите, какое слово вы хотите перевести с какого на какой язык.' \
+INTRO_TEXT = 'Привет! Вы находитесь в приватном навыке "Ёрш-Полиглот". ' \
+    'Скажите, какое слово вы хотите перевести и с какого на какой язык - например "дельфин на английский".' \
     'Чтобы выйти, скажите "Хватит".'
 
+subscription_key = os.environ.get('subscription_key')
+
+MyTranslator = PVE_s_MS_tranlatorClient(subscription_key)
 
 # If you want to store logs, please connect a mongodb cluster.
 # You can get a free one on https://cloud.mongodb.com.
@@ -17,7 +20,8 @@ MONGODB_URI = os.environ.get('MONGODB_URI')
 db = None
 logs_collection = None
 
-log1={"start":datetime.datetime.now()}
+log1={"start":  datetime.datetime.now()}
+
 print(log1)
 
 if MONGODB_URI is not None:
@@ -42,7 +46,7 @@ def do_translate(form, translate_state, token):
         return 'На какой язык нужно перевести?', translate_state
     if not is_like_russian(translate_state['text']) and 'lang_from' not in translate_state:
         return 'С какого языка нужно перевести?', translate_state
-    tran_error, tran_result = translate(**translate_state, token=token)
+    tran_error, tran_result = MyTranslator.translate(**translate_state, token=token)
     text = tran_error or tran_result
     return text, translate_state
 
@@ -56,7 +60,13 @@ def do_fact(form, translate_state):
     translate_state.update(api_req)
     if 'text' not in translate_state:
         return 'Не поняла, какой объект факта', translate_state
-    text = 'Получен факт "' + form['slots'].get('object', {}).get('value') + '" с описанием "'+form['slots'].get('description', {}).get('value')+'" (соединитель: "'+form['slots'].get('connector', {}).get('value')+'").'
+    
+    fact_name           =   form['slots'].get('object', {}).get('value')
+    fact_description    =   form['slots'].get('description', {}).get('value')
+    fact_connector      =   form['slots'].get('connector', {}).get('value')
+
+    text = f'Получен факт "{fact_name}" с описанием {fact_description}  (соединитель: "{fact_connector}").'
+
     return text, translate_state
 
 
@@ -80,7 +90,7 @@ def handler(event, context):
 
     if intents.get('exit'):
         text = 'Приятно было попереводить для вас! ' \
-               'Чтобы вернуться в навык, скажите "Запусти навык Крот-Полиглот". До свидания!'
+               'Чтобы вернуться в навык, скажите "Запусти навык Ёрш-Полиглот". До свидания!'
         end_session = 'true'
     elif intents.get('help'):
         text = INTRO_TEXT
@@ -94,7 +104,9 @@ def handler(event, context):
     elif intents.get('facts'):
         text, translate_state = do_fact(intents.get('facts'), translate_state)
     elif command:
-        text = 'Не понял вас. Чтобы выйти из навыка "Крот-Полиглот", скажите "Хватит".'
+        text =  'Не понял вас. ' \
+                'Напоминаю, что как минимум надо сказать какое слово и на какой язык надо перевести - например "дельфин на английский". ' \
+                'Чтобы выйти из навыка "Ёрш-Полиглот", скажите "Хватит".'
 
     response = {
         'version': event['version'],

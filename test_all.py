@@ -4,7 +4,7 @@ from main import handler
 from translation import translate
 
 
-def test_main():
+def test_main(a,b):
     context = unittest.mock.Mock()
     context.token = {'access_token': 'abcde'}
     event = {
