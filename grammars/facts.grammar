@@ -9,6 +9,7 @@ root:
     $Object $Connector
     %negative
     $Connector    
+    %positive
 
 slots:
     object:
@@ -31,17 +32,17 @@ $Ellipsis:
     %negative
     $LeftFiller
     %positive
-    
+
 $LeftFiller:
     а ещё
     или
     иногда
 
 $Object:
-    .+
     %negative
     $Connector    
     %positive
+    .+
 
 $PositiveConnector:
     %lemma
@@ -62,7 +63,7 @@ $Connector:
     $NegativeConnector
     
 $Description:
-    .+
     %negative
     $Connector    
     %positive
+    .+

@@ -46,8 +46,26 @@ def do_translate(form, translate_state, token):
         return 'На какой язык нужно перевести?', translate_state
     if not is_like_russian(translate_state['text']) and 'lang_from' not in translate_state:
         return 'С какого языка нужно перевести?', translate_state
-    tran_error, tran_result = MyTranslator.translate(**translate_state, token=token)
+        
+    if 'text' in translate_state :
+        cur_text        =   translate_state.get('text')
+    else:
+        cur_text        =   None
+
+    if 'lang_to' in translate_state :
+        cur_lang_to     =   translate_state.get('lang_to')
+    else:
+        cur_lang_to     =   None
+    
+    if 'lang_from' in translate_state :
+        cur_lang_from   =   translate_state.get('lang_from')
+    else:
+        cur_lang_from   =   None
+
+    tran_error, tran_result = MyTranslator.translate(cur_text, cur_lang_to, cur_lang_from)
+    
     text = tran_error or tran_result
+
     return text, translate_state
 
 def do_fact(form, translate_state):
@@ -65,7 +83,7 @@ def do_fact(form, translate_state):
     fact_description    =   form['slots'].get('description', {}).get('value')
     fact_connector      =   form['slots'].get('connector', {}).get('value')
 
-    text = f'Получен факт "{fact_name}" с описанием {fact_description}  (соединитель: "{fact_connector}").'
+    text = f'Получен факт "{fact_name}" с описанием "{fact_description}"  (соединитель: "{fact_connector}").'
 
     return text, translate_state
 

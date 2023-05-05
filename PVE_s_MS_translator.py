@@ -53,7 +53,7 @@ class PVE_s_MS_tranlatorClient:
 
 ###########################################################################################
 
-    def translate(self, text, lang_to, lang_from=None, token=None):
+    def translate(self, text, lang_to, lang_from=None):
         if self.subscription_key is None:
             error = f'Чтобы перевести "{text}" с {lang_from} на {lang_to}, ' \
                     'требуется указать ключ MS translator-а, ' \
