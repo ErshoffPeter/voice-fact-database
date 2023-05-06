@@ -88,13 +88,51 @@ def do_fact(form, translate_state):
     return text, translate_state
 
 
+def do_age(form, translate_state):
+  
+    fact_name           =   form['slots'].get('object', {}).get('value')
+    age                 =   form['slots'].get('age', {}).get('value')
+    metric_period       =   form['slots'].get('metric_period', {}).get('value')
+
+    api_req = {
+        'text': fact_name,
+        'age': age,
+        'metric_period': metric_period,
+    }
+    api_req = {k: v for k, v in api_req.items() if v}
+    translate_state.update(api_req)
+    if 'text' not in translate_state:
+        return 'Не поняла, какой объект факта (возраст)', translate_state
+
+    text = f'Получен факт "{fact_name}" с возрастом "{age}"  "{metric_period}".'
+
+    return text, translate_state
+
+def do_address(form, translate_state):
+  
+    fact_name           =   form['slots'].get('object', {}).get('value')
+    fact_retainer       =   form['slots'].get('retainer', {}).get('value')
+    fact_address        =   form['slots'].get('address', {}).get('value')
+
+    api_req = {
+        'text': fact_name,
+        'retainer': fact_retainer,
+        'address': fact_address
+    }
+    api_req = {k: v for k, v in api_req.items() if v}
+    translate_state.update(api_req)
+    if 'text' not in translate_state:
+        return 'Не поняла, какой объект факта (с адресом)', translate_state
+
+    text = f'Получен факт "{fact_name}" с адресом "{fact_address}"  (соединитель: "{fact_retainer}").'
+
+    return text, translate_state
+
 def handler(event, context):
-    # токен для доступа к API перевода забираем прямо из функции, если у вас есть сервисный аккаунт
-    token = None
-    if context and hasattr(context, 'token') and context.token and token != None:
-        token = context.token.get('access_token')
-    else:
-        token = None
+    utterance = event.get('request', {}).get('original_utterance')
+
+    if logs_collection is not None and utterance != 'ping':
+        logs_collection.insert_one(event)
 
     translate_state = event.get('state', {}).get('session', {}).get('translate', {})
     last_phrase = event.get('state', {}).get('session', {}).get('last_phrase')
@@ -104,7 +142,10 @@ def handler(event, context):
     text = INTRO_TEXT
     end_session = 'false'
 
-    translate_full = intents.get('translate_full')
+    translate_full  =   intents.get('translate_full')
+    facts           =   intents.get('facts')
+    ages            =   intents.get('ages')
+    addresses       =   intents.get('addresses')
 
     if intents.get('exit'):
         text = 'Приятно было попереводить для вас! ' \
@@ -119,8 +160,12 @@ def handler(event, context):
             text = 'Ох, я забыл, что нужно повторить. Попросите меня лучше что-нибудь перевести.'
     elif translate_full:
         text, translate_state = do_translate(translate_full, translate_state, token=token)
-    elif intents.get('facts'):
-        text, translate_state = do_fact(intents.get('facts'), translate_state)
+    elif addresses:
+        text, translate_state = do_address(addresses, translate_state)
+    elif ages:
+        text, translate_state = do_age(ages, translate_state)
+    elif facts:
+        text, translate_state = do_fact(facts, translate_state)
     elif command:
         text =  'Не понял вас. ' \
                 'Напоминаю, что как минимум надо сказать какое слово и на какой язык надо перевести - например "дельфин на английский". ' \
@@ -135,8 +180,6 @@ def handler(event, context):
         },
         'session_state': {'translate': translate_state, 'last_phrase': text}
     }
-
-    utterance = event.get('request', {}).get('original_utterance')
 
     if logs_collection is not None and utterance != 'ping':
         logs_collection.insert_one({

@@ -1,0 +1,69 @@
+root:
+    $Object $Retainer $Address
+
+slots:
+    object:
+        source: $Object
+    retainer:
+        source: $Retainer
+    address:
+        source: $Address
+        type: YANDEX.GEO
+
+filler:
+    алиса
+    а ещё
+    также
+    иногда
+    зачастую
+
+$LeftFiller:
+    а ещё
+    или
+    иногда
+
+$Object:
+    %negative
+    $Connector    
+    %positive
+    .+
+
+$PositiveConnector:
+    %lemma
+    это
+    значит
+    обозначает
+    является
+    бывает
+    есть
+
+$NegativeConnector:
+    %lemma
+    не
+    не $PositiveConnector
+
+$Connector:
+    $PositiveConnector
+    $NegativeConnector
+
+$Retainer:
+    %lemma
+    живёт
+    расположен
+    учится
+    стоит в
+    стоит на
+    ходит в
+    ходит на
+
+$Address:
+    $YANDEX.GEO
+    %lemma
+    нигде
+    везде
+    за углом
+    впереди
+    позади
+    сбоку
+    слева
+    справа

@@ -1,0 +1,64 @@
+root:
+    $Object $Age $Metric_period
+
+slots:
+    object:
+        source: $Object
+    age:
+        source: $Age
+        type: YANDEX.NUMBER
+    metric_period:
+        source: $Metric_period
+
+filler:
+    алиса
+    а ещё
+    также
+    иногда
+    зачастую
+
+$LeftFiller:
+    а ещё
+    или
+    иногда
+
+$Object:
+    %negative
+    $Connector    
+    %positive
+    .+
+
+$PositiveConnector:
+    %lemma
+    это
+    значит
+    обозначает
+    является
+    бывает
+    есть
+
+$NegativeConnector:
+    %lemma
+    не
+    не $PositiveConnector
+
+$Connector:
+    $PositiveConnector
+    $NegativeConnector
+
+$Age:
+    $YANDEX.NUMBER
+    несколько
+    много
+    мало
+ 
+$Metric_period:
+    %lemma
+    годиков | лет | год
+    месяцев
+    дней
+    кварталов
+    десятилетий
+    недель
+    минут
+    секунд
