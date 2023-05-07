@@ -32,7 +32,7 @@ if MONGODB_URI is not None:
     logs_collection = db.logs
     logs_collection.insert_one(log1)
 
-def do_translate(form, translate_state, token):
+def do_translate(form, translate_state):
     api_req = {
         'text': form['slots'].get('phrase', {}).get('value'),
         'lang_from': form['slots'].get('from', {}).get('value'),
@@ -159,7 +159,7 @@ def handler(event, context):
         else:
             text = 'Ох, я забыл, что нужно повторить. Попросите меня лучше что-нибудь перевести.'
     elif translate_full:
-        text, translate_state = do_translate(translate_full, translate_state, token=token)
+        text, translate_state = do_translate(translate_full, translate_state)
     elif addresses:
         text, translate_state = do_address(addresses, translate_state)
     elif ages:
